@@ -1,10 +1,9 @@
 package se.lexicon.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Book {
@@ -15,11 +14,25 @@ public class Book {
     private String isbn;
     private String title;
     private int maxLoanDays;
+    @ManyToMany
+            ( cascade = {CascadeType.REFRESH,CascadeType.DETACH},
+    fetch = FetchType.LAZY)
+
+    @JoinTable(
+            name = "book_author",
+            joinColumns = @JoinColumn(name = "fk_book_id", table ="book_author"),
+            inverseJoinColumns = @JoinColumn(name = "fk_author_id", table = "book_author")
+    )
+
+    private Set<Author> authors;
 
     public Book(String isbn, String title, int maxLoanDays) {
         this.isbn = isbn;
         this.title = title;
         this.maxLoanDays = maxLoanDays;
+    }
+
+    public Book() {
     }
 
     public int getBookId() {
@@ -47,6 +60,43 @@ public class Book {
 
     public void setMaxLoanDays(int maxLoanDays) {
         this.maxLoanDays = maxLoanDays;
+    }
+
+    public Set<Author> getAuthors() {
+        if (authors == null) authors = new HashSet<>();
+        return authors;
+
+    }
+
+    public void setAuthors(Set<Author> authors) {
+        if (authors == null) authors = new HashSet<>();
+        if (authors.isEmpty()){
+            if (this.authors != null){
+                this.authors.forEach( author -> author.getWrittenBooks().remove(this));
+            }
+        }else {
+            authors.forEach(author -> author.getWrittenBooks().add(this));
+        }
+
+        this.authors = authors;
+
+
+    }
+    public void addBook(Author author){
+        if (author == null) throw new IllegalArgumentException("Author was null");
+
+        if(this.authors == null ) this.authors = new HashSet<>();
+        this.authors.add(author);
+        author.getWrittenBooks().add(this);
+    }
+    public void removeBook(Author author)
+    {
+        if (author == null) throw new IllegalArgumentException("Author was null");
+        if(this.authors == null) this.authors = new HashSet<>();
+
+        this.authors.remove(author);
+        author.getWrittenBooks().remove(this);
+
     }
 
     @Override

@@ -4,6 +4,8 @@ import com.sun.corba.se.pept.transport.ContactInfo;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -19,6 +21,11 @@ public class AppUser {
         @OneToOne(cascade = CascadeType.ALL)
         @JoinColumn(name = "fk_details_detailsId")
         private Details userDetails;
+
+        @OneToMany(cascade = {CascadeType.ALL},
+                     fetch = FetchType.LAZY,
+                        mappedBy = "appuser")
+        private List<BookLoan> loans;
 
         public AppUser(String userName, String password, LocalDate regDate) {
                 this.userName = userName;
@@ -63,6 +70,16 @@ public class AppUser {
 
         public void setUserDetails(Details userDetails) {
                 this.userDetails = userDetails;
+        }
+        public void BookLoan(BookLoan bookLoan) {
+                if (bookLoan == null) throw new IllegalArgumentException("Author was null");
+                if (this.loans == null) this.loans = new ArrayList<>();
+
+                if (!this.loans.contains(bookLoan)) {
+                        this.loans.add(bookLoan);
+                        bookLoan.setBorrower(this);
+
+                }
         }
 
         @Override

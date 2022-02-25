@@ -8,7 +8,7 @@ import java.util.Objects;
 public class Details {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-   private int detailsId;
+    private int detailsId;
     @Column(unique = true)
     private String email;
     private String name;
