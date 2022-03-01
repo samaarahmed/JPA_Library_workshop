@@ -45,8 +45,8 @@ public class BookDAOimpl implements BookDAO{
     @Override
     @Transactional
     public Book findById(int id) {
-        Book book = entityManager.find(Book.class, id);
-        return book;
+      return  entityManager.find(Book.class, id);
+
     }
 
     @Override
@@ -60,10 +60,8 @@ public class BookDAOimpl implements BookDAO{
     @Override
     @Transactional
     public void delete(int id) {
-        Book found = findById(id);
-        if (found.getBookId() != 0){
-            entityManager.remove(found);
+            entityManager.remove(findById(id));
         }
 
     }
-}
+

@@ -24,7 +24,7 @@ public class AppUser {
 
         @OneToMany(cascade = {CascadeType.ALL},
                      fetch = FetchType.LAZY,
-                        mappedBy = "appuser")
+                        mappedBy = "borrower")
         private List<BookLoan> loans;
 
         public AppUser(String userName, String password, LocalDate regDate) {

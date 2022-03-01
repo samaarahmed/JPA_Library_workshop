@@ -14,9 +14,12 @@ public class Author {
     private String firstName;
     private String lastName;
     @ManyToMany(
-            cascade = {CascadeType.REFRESH,CascadeType.DETACH},
-            fetch = FetchType.LAZY,
-            mappedBy = "authors"
+            cascade = {CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.MERGE,CascadeType.DETACH},
+            fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "author_book",
+            joinColumns = @JoinColumn(name = "fk_author_id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_book_id")
     )
 
     private Set<Book> writtenBooks;
@@ -66,6 +69,27 @@ public class Author {
 
         this.writtenBooks = writtenBooks;
 
+    }
+
+    public void addBook(Book book){
+        if (book == null) throw new IllegalArgumentException("Author was null");
+
+        if(this.writtenBooks == null ) this.writtenBooks = new HashSet<>();
+        if (!writtenBooks.contains(book)){
+
+            this.writtenBooks.add(book);
+        book.getAuthors().add(this);
+    }}
+    public void removeBook(Book book)
+    {
+        if (book == null) throw new IllegalArgumentException("Author was null");
+        if(this.writtenBooks == null) this.writtenBooks = new HashSet<>();
+
+        if (writtenBooks.contains(book)) {
+
+            this.writtenBooks.remove(book);
+            book.getAuthors().remove(this);
+        }
     }
 
     @Override

@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static javax.persistence.CascadeType.*;
+
 @Entity
 public class Book {
 
@@ -14,25 +16,32 @@ public class Book {
     private String isbn;
     private String title;
     private int maxLoanDays;
+    private boolean available;
     @ManyToMany
-            ( cascade = {CascadeType.REFRESH,CascadeType.DETACH},
-    fetch = FetchType.LAZY)
+            ( cascade = {DETACH,MERGE,REFRESH,PERSIST},
+    fetch = FetchType.LAZY,
+                    mappedBy = "writtenBooks"
+            )
 
-    @JoinTable(
-            name = "book_author",
-            joinColumns = @JoinColumn(name = "fk_book_id", table ="book_author"),
-            inverseJoinColumns = @JoinColumn(name = "fk_author_id", table = "book_author")
-    )
+
 
     private Set<Author> authors;
 
+    protected Book(){
+
+    }
+
     public Book(String isbn, String title, int maxLoanDays) {
+        this(0, isbn, title, maxLoanDays,true, new HashSet<>());
+    }
+
+    public Book(int bookId, String isbn, String title, int maxLoanDays, boolean available, Set<Author> authors) {
+        this.bookId = bookId;
         this.isbn = isbn;
         this.title = title;
         this.maxLoanDays = maxLoanDays;
-    }
-
-    public Book() {
+        this.available = available;
+        this.authors = authors;
     }
 
     public int getBookId() {
@@ -62,6 +71,15 @@ public class Book {
         this.maxLoanDays = maxLoanDays;
     }
 
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
+
     public Set<Author> getAuthors() {
         if (authors == null) authors = new HashSet<>();
         return authors;
@@ -82,21 +100,24 @@ public class Book {
 
 
     }
-    public void addBook(Author author){
+    public void addAuthor(Author author){
         if (author == null) throw new IllegalArgumentException("Author was null");
 
         if(this.authors == null ) this.authors = new HashSet<>();
-        this.authors.add(author);
+
+        if (!authors.contains(author)){
+            this.authors.add(author);
         author.getWrittenBooks().add(this);
-    }
-    public void removeBook(Author author)
+    }}
+    public void removeAuthor(Author author)
     {
         if (author == null) throw new IllegalArgumentException("Author was null");
         if(this.authors == null) this.authors = new HashSet<>();
+        if (authors.contains(author)) {
 
-        this.authors.remove(author);
-        author.getWrittenBooks().remove(this);
-
+            this.authors.remove(author);
+            author.getWrittenBooks().remove(this);
+        }
     }
 
     @Override

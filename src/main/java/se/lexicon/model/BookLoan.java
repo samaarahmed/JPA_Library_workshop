@@ -29,13 +29,19 @@ public class BookLoan {
 
     private Book book;
 
-    public BookLoan(LocalDate loanDate, LocalDate dueDate, boolean returned) {
+    protected BookLoan() {
+    }
+    public BookLoan(Book book) {
+        this(0, LocalDate.now(), null, false, null, book);
+
+    }
+    public BookLoan(int loanId, LocalDate loanDate, LocalDate dueDate, boolean returned, AppUser borrower, Book book) {
+        this.loanId = loanId;
         this.loanDate = loanDate;
         this.dueDate = dueDate;
         this.returned = returned;
-    }
-
-    public BookLoan() {
+        this.borrower = borrower;
+        this.book = book;
     }
 
     public int getLoanId() {
