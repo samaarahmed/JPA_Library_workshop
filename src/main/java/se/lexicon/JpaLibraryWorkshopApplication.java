@@ -4,11 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import se.lexicon.dao.BookDAOimpl;
-import se.lexicon.dao.BookLoanDAO;
-import se.lexicon.dao.BookLoanDAOimpl;
+import se.lexicon.dao.AppUserDAO;
+import se.lexicon.dao.BookDAO;
 import se.lexicon.model.Book;
-import se.lexicon.model.BookLoan;
 
 import java.util.HashSet;
 
@@ -16,7 +14,7 @@ import java.util.HashSet;
 public class JpaLibraryWorkshopApplication implements CommandLineRunner {
 
 	@Autowired
-	BookDAOimpl bookDAOimpl;
+	BookDAO bookDAO;
 
 
 	public static void main(String[] args) {
@@ -26,11 +24,15 @@ public class JpaLibraryWorkshopApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-		bookDAOimpl.create(new Book(0,"1abc123","Java fundamentals",14,true,new HashSet<>()));
-		bookDAOimpl.create(new Book(0,"2abc125","Java advance",14,true,new HashSet<>()));
-		bookDAOimpl.create(new Book(0,"3abc189","Java master",14,true,new HashSet<>()));
-		bookDAOimpl.delete(2);
-		bookDAOimpl.update(new Book(3,"12456bnda","Java advance",14,true,new HashSet<>()));
+		bookDAO.save(new Book(0,"1abc123","Java fundamentals",14,true,new HashSet<>()));
+		bookDAO.save(new Book(0,"2abc125","Java advance",14,true,new HashSet<>()));
+		bookDAO.save(new Book(0,"3abc189","Java master",14,true,new HashSet<>()));
+
+		//bookDAO.update(new Book(3,"12456bnda","Java advance",14,true,new HashSet<>()));
+		//bookDAO.deleteById(2);
+		//System.out.println(bookDAO.findAll());
+		//System.out.println(bookDAO.findBookByTitle("Java master"));
+		System.out.println(bookDAO.findbookbyname("java advance"));
 
 	}
 }

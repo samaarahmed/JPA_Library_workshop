@@ -1,14 +1,14 @@
 package se.lexicon.dao;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import se.lexicon.model.Book;
-import java.util.Collection;
 
-public interface BookDAO {
 
-    Book create(Book book);
-    Book update(Book book);
-    Book findById(int id);
-    Collection<Book> findAll();
-    void delete(int id);
+public interface BookDAO extends JpaRepository<Book,Integer> {
 
+    //Book findBookByTitle (String title);
+    @Query("SELECT t from Book t where t.title = :title ")
+    Book findbookbyname (@Param("title") String title);
 }
